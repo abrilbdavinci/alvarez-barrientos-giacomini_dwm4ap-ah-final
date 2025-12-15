@@ -1,0 +1,261 @@
+/* src/index.css
+   Estilos globales Kälm (sin Tailwind)
+   - No hay :hover (solo :focus-visible)
+   - Variables de tema en :root
+   - Clases reutilizables usadas por los componentes del proyecto
+*/
+
+/* -------------------------
+   Variables de color / tema
+   ------------------------- */
+:root{
+  --kalm-bg: #f6fbfc;
+  --kalm-surface: #ffffff;
+  --kalm-primary: #346b72;
+  --kalm-primary-weak: #5aa6c3;
+  --kalm-accent: #7dd3fc;
+  --kalm-text: #0f1724;
+  --kalm-muted: #64748b;
+  --kalm-border: #e6eef2;
+  --kalm-danger: #ef4444;
+  --kalm-radius: 10px;
+  --kalm-shadow: 0 8px 24px rgba(10,25,40,0.06);
+  --kalm-container: 1100px;
+  --kalm-gap: 12px;
+  --kalm-transition: none;
+  --kalm-font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* -------------------------
+   Reset / base
+   ------------------------- */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  padding-bottom: 60px;
+  margin: 0;
+  background: var(--kalm-bg);
+  color: var(--kalm-text);
+  font-family: var(--kalm-font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.45;
+  font-size: 16px;
+}
+
+/* Headings */
+h1,h2,h3,h4 { margin: 0 0 0.5rem 0; color: var(--kalm-text); font-weight: 700; }
+p { margin: 0 0 1rem 0; color: var(--kalm-text); }
+
+/* Links */
+a { color: var(--kalm-primary); text-decoration: none; }
+a:focus-visible { outline: 3px solid color-mix(in srgb, var(--kalm-primary) 18%, transparent); outline-offset: 3px; border-radius: 6px; }
+
+/* Utility text */
+.muted { color: var(--kalm-muted); }
+.mini { font-size: 0.8rem; color: var(--kalm-muted); }
+
+/* -------------------------
+   Layout helpers
+   ------------------------- */
+.container {
+  max-width: var(--kalm-container);
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* grid helpers */
+.row { display:flex; gap: var(--kalm-gap); align-items:center; }
+.col { display:flex; flex-direction:column; gap: var(--kalm-gap); }
+
+/* small responsive grid */
+.grid-3 { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 768px) { .grid-3 { grid-template-columns: 1fr 1fr 320px; } }
+
+/* -------------------------
+   Cards / surfaces
+   ------------------------- */
+.card {
+  background: var(--kalm-surface);
+  border: 1px solid var(--kalm-border);
+  border-radius: var(--kalm-radius);
+  padding: 14px;
+  box-shadow: var(--kalm-shadow);
+}
+
+/* header-card (special) */
+.header-card {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  padding: 14px;
+}
+
+/* -------------------------
+   Navbar (clases usadas en Navbar.jsx)
+   ------------------------- */
+.k-nav {
+  width: 100%;
+  background: transparent;
+  border-bottom: 1px solid var(--kalm-border);
+  box-shadow: 0 1px 0 rgba(16,24,40,0.02);
+}
+.k-nav-inner {
+  max-width: var(--kalm-container);
+  margin: 0 auto;
+  padding: 10px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+}
+.k-left { display:flex; align-items:center; gap: 18px; }
+.k-brand { display:flex; flex-direction:column; text-decoration:none; color: var(--kalm-text); }
+.k-brand-title { font-weight:800; font-size:18px; color: var(--kalm-primary); }
+.k-brand-sub { font-size:11px; color:var(--kalm-muted); margin-top:2px; }
+.k-links { display:none; gap:12px; align-items:center; }
+.k-link {
+  text-decoration:none;
+  color: var(--kalm-text);
+  font-size:14px;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+.k-link.active { color: var(--kalm-primary); font-weight: 600; background: rgba(37,96,127,0.06); }
+
+/* actions */
+.k-actions { display:flex; gap:8px; align-items:center; }
+.k-btn { font-size:14px; padding:8px 12px; border-radius:8px; border:1px solid transparent; cursor:pointer; background: transparent; color: var(--kalm-text); }
+.k-btn-primary { background: var(--kalm-primary); color: #fff; border-color: transparent; box-shadow: 0 6px 18px rgba(37,96,127,0.12); }
+.k-btn-ghost { background: transparent; border: 1px solid var(--kalm-border); color: var(--kalm-text); }
+.k-user-btn { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; }
+
+/* responsive nav */
+@media (min-width: 640px) { .k-links { display:flex; } }
+@media (max-width: 639px) {
+  .k-brand-sub { display:none; }
+  .k-links { display:none; }
+}
+
+/* focus-visible accesible for buttons/links */
+.k-btn:focus-visible, .k-link:focus-visible, .k-user-btn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--kalm-primary) 20%, transparent);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* -------------------------
+   Buttons genericos
+   ------------------------- */
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:0.5rem 1rem; border-radius:8px; font-weight:600; border:1px solid transparent; cursor:pointer; background: var(--kalm-surface); }
+.btn-primary { background: var(--kalm-primary); color:#fff; border-color: transparent; box-shadow: 0 6px 18px rgba(37,96,127,0.12); }
+.btn-ghost { background: transparent; color: var(--kalm-text); border: 1px solid var(--kalm-border); }
+.btn-outline { background: transparent; color: var(--kalm-primary); border: 1px solid var(--kalm-primary); }
+.btn-danger { background: var(--kalm-danger); color: #fff; border-color: transparent; }
+
+/* focus */
+.btn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--kalm-primary) 18%, transparent);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* disabled */
+.btn[disabled], .disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+
+/* -------------------------
+   Product card (Card.jsx)
+   ------------------------- */
+.product-card { display:flex; flex-direction:column; gap:10px; overflow:hidden; background:var(--kalm-surface); border-radius: 8px; border:1px solid var(--kalm-border); padding:10px; }
+.card-body h4 { margin:0; font-size:1rem; }
+.card-actions { display:flex; gap:8px; margin-top:8px; }
+
+/* -------------------------
+   Formulario (Form.jsx)
+   ------------------------- */
+.form .field { display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+.input, input, textarea, select { background: #fbfdff; border: 1px solid var(--kalm-border); border-radius:8px; padding:9px 10px; color: var(--kalm-text); min-height:38px; font-family:inherit; font-size:0.95rem; }
+textarea { min-height:120px; resize:vertical; padding:10px; }
+.form-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:8px; }
+
+/* focus-visible for inputs */
+.input:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--kalm-primary) 16%, transparent);
+  outline-offset: 3px;
+}
+
+/* -------------------------
+   Home / Layout helpers
+   ------------------------- */
+.search-input { border-radius:10px; padding:8px 10px; border:1px solid var(--kalm-border); min-width:180px; background: white; }
+.select-filter { border-radius:10px; padding:7px 10px; border:1px solid var(--kalm-border); background:white; }
+
+/* skeletons */
+.skeleton-grid { display:grid; gap:12px; grid-template-columns: repeat(1,1fr); }
+@media (min-width:640px) { .skeleton-grid { grid-template-columns: repeat(2,1fr); } }
+@media (min-width:1024px) { .skeleton-grid { grid-template-columns: repeat(3,1fr); } }
+.skeleton-card { height:160px; background: linear-gradient(90deg,#f7fafc,#eef6f8); border-radius:8px; }
+
+/* -------------------------
+   Perfil / ListSimple styles
+   ------------------------- */
+.list-row { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 0; border-bottom: 1px solid var(--kalm-border); }
+.list-row:last-child { border-bottom: none; }
+
+/* -------------------------
+   Misc / small helpers
+   ------------------------- */
+.meta { color: var(--kalm-muted); font-size:0.9rem; }
+.mini { font-size:0.85rem; color:var(--kalm-muted); }
+
+/* spacing helpers */
+.p-4 { padding: 16px; }
+.mb-4 { margin-bottom: 16px; }
+
+/* -------------------------
+   Accessibility: forced focus-visible detection
+   ------------------------- */
+:focus { outline: none; }
+:focus-visible { outline-style: auto; }
+
+/* -------------------------
+   Print / small screens adjustments
+   ------------------------- */
+@media (max-width: 600px) {
+  .k-nav-inner { padding:10px; }
+  .container { padding: 12px; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .card-media img { height: 140px; }
+}
+
+/* ===== Footer fijo ===== */
+.kalm-footer {
+  background: var(--kalm-primary);
+  border-top: 1px solid var(--kalm-border);
+  color: var(--kalm-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  height: 60px;
+  z-index: 50;
+}
+/* -------------------------
+   Ajuste definitivo para imágenes de productos
+   ------------------------- */
+.card .card-media {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.card .card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+
