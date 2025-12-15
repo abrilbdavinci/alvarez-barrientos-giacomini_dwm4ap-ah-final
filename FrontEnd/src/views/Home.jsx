@@ -256,7 +256,7 @@ export default function Home() {
             <h4 style={{ marginBottom: 8 }}>Lista de marcas</h4>
             <ListSimple
               items={marcas}
-              onDelete={deleteMarca}
+              onDelete={token ? deleteMarca : undefined}
               renderItem={(m) => (
                 <div>
                   <strong>{m.nombre}</strong>
