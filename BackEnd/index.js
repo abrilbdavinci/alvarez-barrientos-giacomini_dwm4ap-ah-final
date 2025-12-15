@@ -20,7 +20,7 @@ const PORT = Number(process.env.PORT) || 3000;
 
 
 /* -------------------------
-   Middlewares globales
+  Middlewares globales
    ------------------------- */
 // Habilitar CORS sólo para el frontend en desarrollo
 app.use(

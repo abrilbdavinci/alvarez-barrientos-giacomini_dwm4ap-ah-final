@@ -234,17 +234,21 @@ export default function Home() {
           <div className="card">
             <h4 style={{ marginBottom: 8 }}>Marcas</h4>
             <div style={{ marginTop: 6 }}>
-              <h4 style={{ marginBottom: 8 }}>Crear marca</h4>
-              <Form
-                className="form"
-                fields={[
-                  { name: "nombre", label: "Nombre", default: "" },
-                  { name: "origen", label: "Origen / nota", default: "" },
-                ]}
-                submitLabel="Crear marca"
-                submitClassName="btn btn-primary"
-                onSubmit={createMarca}
-              />
+              {token ? (
+                <div style={{ marginTop: 6 }}>
+                  <h4 style={{ marginBottom: 8 }}>Crear marca</h4>
+                  <Form
+                    className="form"
+                    fields={[
+                      { name: "nombre", label: "Nombre", default: "" },
+                      { name: "origen", label: "Origen / nota", default: "" },
+                    ]}
+                    submitLabel="Crear marca"
+                    submitClassName="btn btn-primary"
+                    onSubmit={createMarca}
+                  />
+                </div>
+              ) : null}
             </div>
           </div>
 
