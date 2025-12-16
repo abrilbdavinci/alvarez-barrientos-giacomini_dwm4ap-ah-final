@@ -27,6 +27,12 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
   };
 
+  //actualizar usuario desde cualquier parte de la app
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+  };
+
   useEffect(() => {
     function syncStorage() {
       const t = localStorage.getItem("token");
@@ -39,7 +45,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authStatus, token, user, login, logout }}>
+    <AuthContext.Provider
+      value={{ authStatus, token, user, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

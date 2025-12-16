@@ -7,16 +7,7 @@ export default function Navbar() {
   const { authStatus, logout, user: ctxUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // fallback: si el contexto no trae user, intentar parsear localStorage
-  let user = ctxUser;
-  if (!user) {
-    try {
-      const raw = localStorage.getItem("user");
-      if (raw) user = JSON.parse(raw);
-    } catch (e) {
-      user = null;
-    }
-  }
+ const user = ctxUser;
 
   function handleLogout() {
     try {

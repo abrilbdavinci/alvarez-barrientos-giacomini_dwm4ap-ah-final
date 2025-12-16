@@ -29,11 +29,12 @@ const newUser = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const usuario = new User({
-      nombre: nombre || '',
-      email: emailNorm,
-      password: hashedPassword,
-    });
+    const user = {
+      nombre,
+      email,
+      password,
+      rol: "user"
+    };
 
     const data = await usuario.save();
 

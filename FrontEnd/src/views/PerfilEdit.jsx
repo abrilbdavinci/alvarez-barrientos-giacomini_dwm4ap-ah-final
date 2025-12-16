@@ -6,7 +6,7 @@ import { AuthContext } from "../utils/AuthContext";
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3000/api";
 
 export default function PerfilEdit() {
-    const { token, setUser } = useContext(AuthContext);
+    const { token, updateUser } = useContext(AuthContext);
     const navigate = useNavigate();
     const [user, setLocalUser] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -44,31 +44,43 @@ export default function PerfilEdit() {
     }, [token, navigate]);
 
     async function handleSubmit(values) {
-        if (!token) {
-        alert("Debes iniciar sesión");
-        return;
+        // soporte para id o _id
+        const userId = user?.id || user?._id;
+
+        if (!token || !userId) {
+            alert("Debes iniciar sesión");
+            return;
         }
+
         try {
-        const res = await fetch(`${API_BASE}/usuarios/perfil`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            const res = await fetch(`${API_BASE}/usuarios/${userId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
             body: JSON.stringify(values),
-        });
-        if (!res.ok) {
+            });
+
+            if (!res.ok) {
             const b = await res.json().catch(() => ({}));
             throw new Error(b.msg || b.error || res.statusText);
-        }
-        const d = await res.json();
-        const updated = d.data || d;
-        setLocalUser(updated);
-        if (typeof setUser === "function") setUser(updated);
-        alert("Perfil actualizado");
-        navigate("/perfil", { replace: true });
+            }
+
+            const d = await res.json();
+            const updated = d.data || d;
+
+            setLocalUser(updated);
+            if (typeof setUser === "function") updateUser(updated);
+
+            alert("Perfil actualizado");
+            navigate("/perfil", { replace: true });
         } catch (err) {
-        console.error("update profile", err);
-        alert(err.message || "Error actualizando perfil");
+            console.error("update profile", err);
+            alert(err.message || "Error actualizando perfil");
         }
     }
+
 
     if (!token) return <div className="card">Inicia sesión para editar tu perfil.</div>;
     if (loading) return <div className="card">Cargando...</div>;
@@ -84,7 +96,7 @@ export default function PerfilEdit() {
             fields={[
                 { name: "nombre", label: "Nombre", default: user.nombre || "" },
                 { name: "email", label: "Email", default: user.email || "" },
-                { name: "password", label: "password", default: user.password || "" },
+                { name: "password", label: "Nueva contraseña", default: "" },
                 ]}
                 submitLabel="Guardar cambios"
                 submitClassName="btn btn-primary"

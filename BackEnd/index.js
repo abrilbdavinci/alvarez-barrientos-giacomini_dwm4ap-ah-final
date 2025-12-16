@@ -26,7 +26,7 @@ const PORT = Number(process.env.PORT) || 3000;
 app.use(
   cors({
     origin: corsOrigin, // origen exacto (no usar '*' si usás cookies)
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
     credentials: true,
   })
