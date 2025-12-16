@@ -15,8 +15,8 @@ export default function Contact() {
   }
 
   return (
-    <div className="container" style={{ height: "90vh"}}>
-      <h2 className="mb-4" style={{ margin: "28px auto"}}>
+    <div className="container" >
+      <h2 className="mb-4">
         Contacto — Kälm
       </h2>
 

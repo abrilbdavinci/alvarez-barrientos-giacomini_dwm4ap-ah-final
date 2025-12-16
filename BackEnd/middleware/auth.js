@@ -20,6 +20,7 @@ function validarToken(req, res, next) {
     }
 
     const token = parts[1];
+    
     try {
       const decoded = jwt.verify(token, SECRET);
       req.user = decoded;

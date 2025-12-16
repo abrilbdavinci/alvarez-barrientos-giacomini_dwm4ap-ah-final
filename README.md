@@ -1,4 +1,4 @@
-# Kälm - DWM4AP P2 AH
+# Kälm - DWM4AP FINAL AH
 
 Este proyecto es una aplicación web que permite explorar productos y marcas pensadas para la rutina diaria. Incluye funcionalidades para ver productos, filtrar por marca o tipo, y crear nuevas marcas directamente desde la interfaz. Está desarrollado con **React** en el frontend y consume una API REST para obtener los datos.
 

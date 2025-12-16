@@ -1,53 +1,92 @@
-import { createContext, useState, useEffect } from "react";
+// src/utils/AuthContext.jsx
+import { createContext, useState, useEffect, useCallback } from "react";
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const storedToken = localStorage.getItem("token");
-  const storedUser = localStorage.getItem("user");
+export function AuthProvider({ children }) {
+  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3000/api";
 
-  const [token, setToken] = useState(storedToken ? storedToken.replace(/"/g, "") : null);
-  const [user, setUser] = useState(storedUser ? JSON.parse(storedUser) : null);
+  const [token, setToken] = useState(() => localStorage.getItem("token") || null);
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem("user");
+    return saved ? JSON.parse(saved) : null;
+  });
 
-  const authStatus = token && user ? "ok" : "logout";
+  const authStatus = token ? "ok" : "guest";
 
-  const login = (newToken, newUser) => {
-    const t = newToken.replace(/"/g, "");
-    setToken(t);
-    setUser(newUser || null);
-    localStorage.setItem("token", t);
-    if (newUser) localStorage.setItem("user", JSON.stringify(newUser));
-  };
+  // login: guarda token y usuario
+  function login(newToken, newUser) {
+    setToken(newToken);
+    setUser(newUser);
+    localStorage.setItem("token", newToken);
+    localStorage.setItem("user", JSON.stringify(newUser));
+  }
 
-  const logout = () => {
+  // logout: limpia todo
+  function logout() {
     setToken(null);
     setUser(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-  };
+  }
 
-  //actualizar usuario desde cualquier parte de la app
-  const updateUser = (updatedUser) => {
-    setUser(updatedUser);
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-  };
-
-  useEffect(() => {
-    function syncStorage() {
-      const t = localStorage.getItem("token");
-      const u = localStorage.getItem("user");
-      setToken(t ? t.replace(/"/g, "") : null);
-      setUser(u ? JSON.parse(u) : null);
+  // refrescar usuario desde backend
+  const refreshUser = useCallback(async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE}/usuarios/perfil`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("No se pudo actualizar el usuario");
+      const data = await res.json();
+      if (data.data) {
+        setUser(data.data);
+        localStorage.setItem("user", JSON.stringify(data.data));
+      }
+    } catch (err) {
+      console.error("Error refrescando usuario:", err);
     }
-    window.addEventListener("storage", syncStorage);
-    return () => window.removeEventListener("storage", syncStorage);
-  }, []);
+  }, [token]);
+
+  // upgrade a premium
+  const upgradeToPremium = async () => {
+  if (!token) throw new Error("No hay token");
+
+  const res = await fetch(`${API_BASE}/usuarios/upgrade`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+  });
+
+  if (!res.ok) throw new Error("Error al actualizar a premium");
+
+  const data = await res.json();
+
+  // Guardar usuario y token actualizado
+  setUser(data.data);
+  localStorage.setItem("user", JSON.stringify(data.data));
+  localStorage.setItem("token", data.token);
+};
+
+
+  // refrescar usuario al montar la app
+  useEffect(() => {
+    refreshUser();
+  }, [refreshUser]);
 
   return (
     <AuthContext.Provider
-      value={{ authStatus, token, user, login, logout, updateUser }}>
+      value={{
+        token,
+        user,
+        authStatus,
+        login,
+        logout,
+        refreshUser,
+        setUser,
+        upgradeToPremium, // 🔹 ahora sí lo exportamos
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-};
+}

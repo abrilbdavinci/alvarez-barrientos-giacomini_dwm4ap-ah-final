@@ -1,13 +1,9 @@
+// src/pages/Perfil.jsx
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../utils/AuthContext";
-import { useNavigate, Route } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3000/api";
-
-function getCreatedAtFrom(obj) {
-  if (!obj) return null;
-  return obj.createdAt || obj.created_at || obj.created || obj.fechaCreacion || null;
-}
 
 function formatDateSafe(value) {
   if (!value) return "N/A";
@@ -27,50 +23,44 @@ function formatDateSafe(value) {
 }
 
 export default function Perfil() {
-  const { token: contextToken, logout } = useContext(AuthContext);
+  const { token, logout, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [token, setToken] = useState(contextToken || null);
   const [usuarios, setUsuarios] = useState([]);
-  const [me, setMe] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [debugMsg, setDebugMsg] = useState("");
+
+  const isAdmin = user?.rol === "admin";
 
   useEffect(() => {
-    if (contextToken && contextToken !== token) setToken(contextToken);
-  }, [contextToken, token]);
+    if (!token) return;
 
-  useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    async function fetchData(endpoint, setter) {
-      if (!token) return;
+    async function fetchUsers() {
+      if (!isAdmin) return setUsuarios([]); // solo admins pueden ver usuarios
       try {
-        const res = await fetch(`${API_BASE}${endpoint}`, {
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        const res = await fetch(`${API_BASE}/usuarios`, {
+          headers: { Authorization: `Bearer ${token}` },
           signal,
         });
-
         if (res.status === 401 || res.status === 403) {
           logout?.();
           navigate("/login", { replace: true });
           return;
         }
-
-        const data = await res.json().catch(() => null);
-        setter(data?.data || data || []);
+        const data = await res.json();
+        setUsuarios(data?.data || []);
       } catch (err) {
-        if (err.name !== "AbortError") console.warn(`Fetch ${endpoint} error:`, err);
+        if (err.name !== "AbortError") console.error("No se pudo obtener usuarios:", err);
       }
     }
 
     setLoading(true);
-    fetchData("/usuarios/perfil", setMe);
-    fetchData("/usuarios", setUsuarios).finally(() => setLoading(false));
+    fetchUsers().finally(() => setLoading(false));
 
     return () => controller.abort();
-  }, [token, logout, navigate]);
+  }, [token, logout, navigate, isAdmin]);
 
   return (
     <div className="page-root" style={{ maxWidth: 1080, margin: "12px auto", padding: 16 }}>
@@ -85,24 +75,23 @@ export default function Perfil() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 16 }}>
           <div>
             <div className="card">
-              {me ? (
+              {user ? (
                 <div style={{ display: "grid", gap: 6 }}>
                   <div><strong>Nombre</strong></div>
-                  <div className="muted">{me.nombre || me.name || "—"}</div>
+                  <div className="muted">{user.nombre || user.name || "—"}</div>
                   <div style={{ marginTop: 8 }}><strong>Email</strong></div>
-                  <div className="muted">{me.email || "—"}</div>
+                  <div className="muted">{user.email || "—"}</div>
+                  <div style={{ marginTop: 8 }}><strong>Rol</strong></div>
+                  <div className="muted">{user.rol || "—"}</div>
 
-                  {/* Botón para editar perfil — solo visible si hay token */}
-                  {contextToken ? (
-                    <div style={{ marginTop: 12 }}>
-                      <button
-                        className="btn btn-secondary"
-                        onClick={() => navigate("/perfil/editar")}
-                      >
-                        Editar perfil
-                      </button>
-                    </div>
-                  ) : null}
+                  <div style={{ marginTop: 12 }}>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => navigate("/perfil/editar")}
+                    >
+                      Editar perfil
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="muted">No disponible</div>
@@ -111,23 +100,30 @@ export default function Perfil() {
 
             <div className="card" style={{ marginTop: 12 }}>
               <h3 style={{ marginTop: 0 }}>Mis rutinas</h3>
-              <div className="muted">Las rutinas personales se guardan desde la versión completa del producto.</div>
+              <div className="muted">
+                Las rutinas personales se guardan desde la versión completa del producto.
+              </div>
             </div>
-
-            
           </div>
 
           <aside>
             <div className="card">
               <h3 style={{ marginTop: 0 }}>Usuarios del sistema</h3>
-              {usuarios.length === 0 ? (
-                <div className="muted">Sin usuarios o no tienes permisos</div>
+              {!isAdmin ? (
+                <div className="muted">No tienes permisos para ver otros usuarios</div>
+              ) : usuarios.length === 0 ? (
+                <div className="muted">Sin usuarios</div>
               ) : (
                 <div style={{ display: "grid", gap: 8 }}>
                   {usuarios.map((u) => (
-                    <div key={u._id || u.email} style={{ padding: 8, borderBottom: "1px solid var(--kalm-border)" }}>
+                    <div
+                      key={u._id || u.email}
+                      style={{ padding: 8, borderBottom: "1px solid var(--kalm-border)" }}
+                    >
                       <div style={{ fontWeight: 700 }}>{u.nombre || "—"}</div>
                       <div className="mini muted">{u.email || "—"}</div>
+                      <div className="mini muted">Rol: {u.rol || "—"}</div>
+                      <div className="mini muted">Creado: {formatDateSafe(u.createdAt)}</div>
                     </div>
                   ))}
                 </div>
