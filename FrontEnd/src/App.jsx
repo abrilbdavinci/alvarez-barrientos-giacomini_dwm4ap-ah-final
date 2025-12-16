@@ -9,6 +9,7 @@ import Login from "./views/Login";
 import Registro from "./views/Registro";
 import NotFound from "./views/NotFound";
 import Perfil from "./views/Perfil";
+import PerfilEdit from "./views/PerfilEdit";
 import "./index.css";
 import { PrivateRoute } from "./utils/PrivateRoute";
 import { AuthProvider } from "./utils/AuthContext";
@@ -23,14 +24,17 @@ function App() {
         <main className="app-main">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route
-              path="/perfil"
-              element={
-                <PrivateRoute>
+            <Route path="/perfil" element={ 
+              <PrivateRoute>
                   <Perfil />
                 </PrivateRoute>
               }
             />
+            <Route path="/perfil/editar" element={
+              <PrivateRoute>
+                <PerfilEdit />
+              </PrivateRoute>
+            } />
             <Route path="/contact" element={<Contact />} />
             <Route path="/details/:id" element={<Details />} />
             <Route path="/registro" element={<Registro />} />

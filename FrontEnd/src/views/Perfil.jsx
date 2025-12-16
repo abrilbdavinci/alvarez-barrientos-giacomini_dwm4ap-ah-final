@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../utils/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Route } from "react-router-dom";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3000/api";
 
@@ -91,6 +91,18 @@ export default function Perfil() {
                   <div className="muted">{me.nombre || me.name || "—"}</div>
                   <div style={{ marginTop: 8 }}><strong>Email</strong></div>
                   <div className="muted">{me.email || "—"}</div>
+
+                  {/* Botón para editar perfil — solo visible si hay token */}
+                  {contextToken ? (
+                    <div style={{ marginTop: 12 }}>
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => navigate("/perfil/editar")}
+                      >
+                        Editar perfil
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
               ) : (
                 <div className="muted">No disponible</div>
@@ -101,6 +113,8 @@ export default function Perfil() {
               <h3 style={{ marginTop: 0 }}>Mis rutinas</h3>
               <div className="muted">Las rutinas personales se guardan desde la versión completa del producto.</div>
             </div>
+
+            
           </div>
 
           <aside>
