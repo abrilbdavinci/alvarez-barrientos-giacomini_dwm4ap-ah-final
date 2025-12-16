@@ -231,10 +231,10 @@ export default function Home() {
 
         {/* Sidebar */}
         <aside style={{ width: 300, flexShrink: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+          {token ? (
           <div className="card">
             <h4 style={{ marginBottom: 8 }}>Marcas</h4>
             <div style={{ marginTop: 6 }}>
-              {token ? (
                 <div style={{ marginTop: 6 }}>
                   <h4 style={{ marginBottom: 8 }}>Crear marca</h4>
                   <Form
@@ -248,9 +248,10 @@ export default function Home() {
                     onSubmit={createMarca}
                   />
                 </div>
-              ) : null}
+              
             </div>
           </div>
+          ) : null}
 
           <div className="card">
             <h4 style={{ marginBottom: 8 }}>Lista de marcas</h4>

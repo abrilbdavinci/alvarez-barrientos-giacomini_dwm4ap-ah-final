@@ -125,7 +125,7 @@ export default function Login() {
         </form>
 
         <div style={{ marginTop: 12 }} className="muted">
-          <small>¿Olvidaste tu contraseña? Contactá al administrador del sistema.</small>
+          <small>¿Olvidaste tu contraseña? Contactá al istrador del sistema.</small>
         </div>
       </div>
     </div>
